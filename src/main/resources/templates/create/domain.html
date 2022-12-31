@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Create domain</title>
 </head>
 <body>
-$END$
+<form action="#" th:action="@{/create/domain/{domain}(domain=${domain.id})}" th:object="${domain}" method="post">
+    <label for="createDomain">Domain: </label>
+    <input type="text" id="createDomain" th:field="*{id}" readonly="readonly" />
+    <button name="action" value="create" type="submit">Create</button>
+</form>
 </body>
 </html>

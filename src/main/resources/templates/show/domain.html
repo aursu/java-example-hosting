@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title th:if="${search.domain}" th:text="|Domain ${search.domain.id}|"></title>
+    <title th:unless="${search.domain}" th:text="|Domain ${search.domainName} not found|"></title>
 </head>
 <body>
-$END$
+<div th:if="${search.domain}">
+    <div th:replace="search/domain.html :: searchForm" />
+    <h3 th:text="|Domain ${search.domain.id}:|"></h3>
+    <form action="#" th:action="@{/edit/domain}" th:object="${domain}" method="post">
+        <label for="editDomain">Domain: </label>
+        <input type="text" id="editDomain" th:field="*{id}" readonly="readonly" />
+        <button name="action" value="update" type="submit">Update</button>
+    </form>
+</div>
+<div th:unless="${search.domain}">
+    <form action="#" th:action="@{/create/domain}" th:object="${search}" method="post">
+        <label for="createDomain">Domain: </label>
+        <input type="text" id="createDomain" th:field="*{domainName}" readonly="readonly" />
+        <input type="hidden" th:field="*{webPage}" />
+        <button name="action" value="create" type="submit">Create</button>
+        <button name="action" value="back" type="submit">Back</button>
+    </form>
+    <h3 th:text="|Domain &quot;${search.domainName}&quot; not found.|"></h3>
+</div>
 </body>
 </html>
