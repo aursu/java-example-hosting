@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Entity
-public class DomainService {
+@Table(name = "DomainService")
+public class DomainHostingService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", columnDefinition = "INT UNSIGNED not null")

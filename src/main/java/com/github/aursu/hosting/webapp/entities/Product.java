@@ -14,15 +14,15 @@ public class Product {
     @Column(name = "Name", nullable = false, length = 64)
     private String name;
 
-    @Lob
+
     @Column(name = "Type", nullable = false)
     private String type;
 
-    @Lob
+
     @Column(name = "Billing")
     private String billing;
 
-    @Lob
+
     @Column(name = "Description")
     private String description;
 

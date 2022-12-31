@@ -11,18 +11,15 @@ import java.util.Set;
 @Entity
 public class Domain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Domain", nullable = false)
     private String id;
 
-    @Lob
     @Column(name = "Type", nullable = false)
     private String type;
 
     @Column(name = "Password")
     private String password;
 
-    @Lob
     @Column(name = "Status", nullable = false)
     private String status;
 
@@ -44,7 +41,7 @@ public class Domain {
     private Customer customer;
 
     @OneToMany(mappedBy = "domain")
-    private Set<DomainService> domainServices = new LinkedHashSet<>();
+    private Set<DomainHostingService> domainServices = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PrimaryDomain")
@@ -130,11 +127,11 @@ public class Domain {
         this.customer = customer;
     }
 
-    public Set<DomainService> getDomainServices() {
+    public Set<DomainHostingService> getDomainServices() {
         return domainServices;
     }
 
-    public void setDomainServices(Set<DomainService> domainServices) {
+    public void setDomainServices(Set<DomainHostingService> domainServices) {
         this.domainServices = domainServices;
     }
 

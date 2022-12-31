@@ -51,11 +51,9 @@ public class Hoster {
     @Column(name = "Email", nullable = false, length = 60)
     private String email;
 
-    @Lob
     @Column(name = "Status", nullable = false)
     private String status;
 
-    @Lob
     @Column(name = "Type", nullable = false)
     private String type;
 

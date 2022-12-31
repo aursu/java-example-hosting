@@ -53,11 +53,9 @@ public class Customer {
     @Column(name = "Email", nullable = false, length = 60)
     private String email;
 
-    @Lob
     @Column(name = "PaymentMethod", nullable = false)
     private String paymentMethod;
 
-    @Lob
     @Column(name = "CardType")
     private String cardType;
 
