@@ -90,19 +90,19 @@ create table if not exists Customer
         foreign key (HosterId) references Hoster (HosterId)
 );
 
-create table Domain
+create table if not exists Domain
 (
-    Domain        varchar(255)                                               not null
+    Domain        varchar(255) charset utf8mb4                               not null
         primary key,
     Type          enum ('Regular', 'Subdomain')            default 'Regular' not null,
-    Password      varchar(255)                                               null,
+    Password      varchar(255) charset utf8mb4                               null,
     Status        enum ('New', 'OK', 'Suspend', 'Disable') default 'New'     not null,
     StartDate     datetime                                                   not null,
     SuspendDate   datetime                                                   null,
     ExpireDate    datetime                                                   null,
-    ProductCode   varchar(32)                                                not null,
+    ProductCode   varchar(32) charset utf8mb4                                not null,
     CustomerId    int                                                        not null,
-    PrimaryDomain varchar(255)                                               null,
+    PrimaryDomain varchar(255)  charset utf8mb4                              null,
     constraint Domain_Customer_null_fk
         foreign key (CustomerId) references Customer (CustomerId),
     constraint Domain_Domain_Domain_fk
