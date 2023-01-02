@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hosting Platform</title>
+    <th:block th:fragment="jquery">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    </th:block>
+</head>
+<body>
+<h1 th:fragment="mainHeader">Hosting Platform</h1>
+<h3 th:fragment="searchHeader">Search for Domain</h3>
+<form action="#" th:action="@{/search/domain}" th:object="${search}" method="post" th:fragment="searchForm">
+    <label for="domain">Domain</label>
+    <input type="text" id="domain" th:field="*{domainName}" />
+    <button name="action" value="search" type="submit">Search</button>
+    <button name="action" value="back" type="submit">Back</button>
+</form>
+</body>
+</html>

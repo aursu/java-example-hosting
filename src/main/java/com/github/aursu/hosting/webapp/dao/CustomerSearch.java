@@ -1,32 +1,29 @@
 package com.github.aursu.hosting.webapp.dao;
 
-import com.github.aursu.hosting.webapp.entities.Customer;
-import com.github.aursu.hosting.webapp.entities.Domain;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Data
 @Component
-public class DomainSearch {
-    private String domainName;
+public class CustomerSearch {
+    private String firstName;
+    private String lastName;
+    private String email;
 
-    private Domain domain;
-    private Customer customer;
+    private Integer customerId;
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;
+    private DomainSearch domainSearch;
 
     public void addPage(String action, String webPage) {
         navigation.put(action, webPage);
     }
 
-    public String getPage(String  action) {
+    public String getPage(String action) {
         return navigation.get(action);
     }
 }

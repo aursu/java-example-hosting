@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select customer</title>
+</head>
+<body>
+<h1 th:replace="main.html :: mainHeader"></h1>
+<h3>Select customer</h3>
+<form action="#" th:action="@{/select/customer}" th:object="${search}" method="post">
+    <fieldset>
+        <legend>Select customer</legend>
+        <div>
+            <table>
+            <th:block th:each="c : ${customers}">
+                <tr>
+                    <td th:text="${c.id}"></td>
+                    <td>
+                        <p th:text="|${c.firstName} ${c.lastName} (${c.email})|"></p>
+                        <p th:text="|Hoster: ${c.hoster.company} (${c.hoster.id})|"></p>
+                        <p th:text="|Cluster: ${c.hoster.cluster.name} (${c.hoster.cluster.region})|"></p>
+                    </td>
+                    <td><input type="radio" th:field="*{customerId}" th:value="${c.id}" /></td>
+                </tr>
+            </th:block>
+                <tr>
+                    <td></td>
+                    <td><button name="action" value="cancel" type="submit">Cancel</button></td>
+                    <td><button name="action" value="select" type="submit">Select</button></td>
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+</form>
+</body>
+</html>

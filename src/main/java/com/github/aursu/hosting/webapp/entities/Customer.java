@@ -8,6 +8,9 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Customer.findBy", query = "select c from Customer c where upper(c.email) like upper(concat('%', :email, '%')) and upper(c.firstName) like upper(concat('%', :firstName, '%')) and upper(c.lastName) like upper(concat('%', :lastName, '%'))")
+})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

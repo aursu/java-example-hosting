@@ -5,7 +5,8 @@
     <title>Invalid Domain name</title>
 </head>
 <body>
-<div th:replace="search/domain.html :: searchForm" />
+<h1 th:replace="main.html :: mainHeader"></h1>
 <h3 th:text="|Domain name &quot;${search.domainName}&quot; is invalid|"></h3>
+<div th:replace="main.html :: searchForm" />
 </body>
 </html>
