@@ -2,8 +2,11 @@ package com.github.aursu.hosting.webapp.controllers;
 
 import com.github.aursu.hosting.webapp.dao.CustomerSearch;
 import com.github.aursu.hosting.webapp.dao.DomainSearch;
+import com.github.aursu.hosting.webapp.entities.Customer;
 import com.github.aursu.hosting.webapp.entities.Domain;
+import com.github.aursu.hosting.webapp.entities.Product;
 import com.github.aursu.hosting.webapp.repositories.DomainRepository;
+import com.github.aursu.hosting.webapp.repositories.ProductRepository;
 import com.github.aursu.hosting.webapp.services.DomainService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -15,12 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
 public class DomainController {
     private final DomainRepository domainRepository;
+    private final ProductRepository productRepository;
 
     private final DomainService domainService;
 
@@ -70,19 +75,25 @@ public class DomainController {
         }
 
         if (search == null || search.getCustomer() == null) {
+            // we really need a customer alive here
             return searchCustomer(redirectAttributes);
         }
-        else {
-            domainSearch.setCustomer(search.getCustomer());
-        }
+
+        Customer customer = search.getCustomer();
+
+        // store it within session
+        domainSearch.setCustomer(customer);
+
 
         Domain domainEntity = new Domain();
         domainEntity.setId(domain);
+        domainEntity.setCustomer(customer);
+
+        List<Product> packages = productRepository.findPackages();
 
         // customer is stored in Domain search object
-        model.addAttribute("search", domainSearch);
-
         model.addAttribute("domain", domainEntity);
+        model.addAttribute("packages", packages);
 
         return "/create/domain";
     }
@@ -110,6 +121,10 @@ public class DomainController {
                 domainSearch.setDomain(domainEntity);
                 model.addAttribute("domain", domainEntity);
             }
+            else {
+                // unset if not found
+                domainSearch.unsetDomain();
+            }
 
             model.addAttribute("search", domainSearch);
             return "/show/domain";
@@ -135,8 +150,9 @@ public class DomainController {
         return searchCustomer(redirectAttributes);
     }
 
-    @PostMapping("/create/domain/{domain}")
-    public String create(Model model, @ModelAttribute Domain domainEntity, @PathVariable String domain) {
+    @PostMapping("/create/domain/{domainName}")
+    public String create(Model model, @ModelAttribute Domain domain, @PathVariable String domainName) {
+        domainRepository.save(domain);
         return "redirect:/";
     }
 }

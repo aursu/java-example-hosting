@@ -11,42 +11,59 @@
 <form action="#" th:action="@{/create/domain/{domain}(domain=${domain.id})}" th:object="${domain}" method="post">
     <table>
         <tr>
+            <td><p>For customer: </p></td>
+            <td>
+                <p th:text="|*{customer.id}: *{customer.firstName} *{customer.lastName} (*{customer.email})|"></p>
+                <p th:text="|Hoster: *{customer.hoster.company} (*{customer.hoster.id})|"></p>
+                <p th:text="|Cluster: *{customer.hoster.cluster.name} (*{customer.hoster.cluster.region})|"></p>
+                <input type="hidden" th:field="*{customer.id}" />
+            </td>
+        </tr>
+        <tr>
             <td><label for="createDomain">Domain: </label></td>
             <td><input type="text" id="createDomain" th:field="*{id}" readonly="readonly" /></td>
         </tr>
         <tr>
-            <td><p>Domain Type: </p></td>
+            <td><label for="domainType">Domain Type: </label></td>
             <td>
-                <input type="radio" id="typeRegular" th:field="*{type}" value="Regular" checked="checked"/>
-                <label for="typeRegular">Regular</label>
-                <input type="radio" id="typeSubdomain" th:field="*{type}" value="Subdomain" />
-                <label for="typeSubdomain">Subdomain</label>
+                <select id="domainType" th:field="*{type}">
+                    <option selected="selected" value="Regular">Regular</option>
+                    <option value="Subdomain">Subdomain</option>
+                </select>
             </td>
         </tr>
         <tr>
-            <td><label for="password">Password (8 characters minimum):</label></td>
-            <td><input type="password" id="password" th:name="*{password}"
-                       minlength="8" required="required"></td>
+            <td><label for="password">Password: </label></td>
+            <td><input type="password" id="password" th:field="*{password}"
+                       minlength="8" required="required" /></td>
         </tr>
         <tr>
-            <td><p>Status: </p></td>
+            <td><label for="status">Status: </label></td>
             <td>
-                <input type="radio" id="statusNew" th:field="*{status}" value="New" checked="checked"/>
-                <label for="statusNew">New</label>
-                <input type="radio" id="statusOK" th:field="*{status}" value="OK" />
-                <label for="statusOK">OK</label>
-                <input type="radio" id="statusSuspend" th:field="*{status}" value="Suspend" />
-                <label for="statusSuspend">Suspend</label>
-                <input type="radio" id="statusDisable" th:field="*{status}" value="Disable" />
-                <label for="statusDisable">Disable</label>
+                <select id="status" th:field="*{status}">
+                    <option selected="selected" value="New">New</option>
+                    <option value="OK">OK</option>
+                    <option value="Suspend">Suspend</option>
+                    <option value="Disable">Disable</option>
+                </select>
             </td>
         </tr>
         <tr>
             <td><label for="startDate">Start Date: </label></td>
             <td>
                 <input type="datetime-local" id="startDate"
-                       th:name="*{startDate}"
-                       min="2022-10-01T00:00" required>
+                       th:field="*{startDate}"
+                       min="2022-10-01T00:00" required="required" />
+            </td>
+        </tr>
+        <tr>
+            <td><label for="product">Product: </label></td>
+            <td>
+                <select th:field="*{product.id}" id="product">
+                    <th:block th:each="p : ${packages}">
+                    <option th:value="${p.id}" th:text="|${p.id}: ${p.name} - ${p.price} (${p.billing}) q:${p.quota} t:${p.transferLimit} m:${p.mailboxes} mq:${p.mailQuota} ftp:${p.ftpUserLimit}|"></option>
+                    </th:block>
+                </select>
             </td>
         </tr>
         <tr>
