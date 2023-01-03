@@ -71,7 +71,7 @@ public class Customer {
     @Column(name = "CardHolder", length = 30)
     private String cardHolder;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "HosterId", nullable = false)
     private Hoster hoster;
 

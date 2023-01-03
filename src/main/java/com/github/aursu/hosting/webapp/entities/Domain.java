@@ -32,11 +32,11 @@ public class Domain {
     @Column(name = "ExpireDate")
     private LocalDateTime expireDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ProductCode", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "CustomerId", nullable = false)
     private Customer customer;
 

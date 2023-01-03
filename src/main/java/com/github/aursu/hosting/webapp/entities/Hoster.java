@@ -87,7 +87,7 @@ public class Hoster {
     @Column(name = "MySQL_IP", length = 16)
     private String mysqlIp;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ClusterId", nullable = false)
     private Cluster cluster;
 
