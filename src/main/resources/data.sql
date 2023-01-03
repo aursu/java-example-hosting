@@ -14,3 +14,12 @@ INSERT IGNORE INTO `Customer` VALUES (3,'Aaron','Mitchell',NULL,'696 Osborne Str
 INSERT IGNORE INTO `Customer` VALUES (4,'Martha','Silk',NULL,'194A Chain Lake Drive',NULL,'Halifax','Nova Scotia','Canada','B3S 1C5','902-450-0450',NULL,NULL,'marthasilk@gmail.com','PayPal',NULL,NULL,NULL,NULL,401);
 INSERT IGNORE INTO `Customer` VALUES (5,'Julia','Barnett',NULL,'302 S 700 E',NULL,'Salt Lake City','Utah','United States','84102','801-531-7272',NULL,NULL,'jubarnett@gmail.com','Credit',NULL,NULL,NULL,NULL,401);
 
+INSERT IGNORE INTO `Product` VALUES ('BGMSSQL2','MS SQL 2000 10MB Lite (yearly)','Service','Yearly','MS SQL 2000 10MB Lite (yearly)',89.88,0,10,0,1024,0);
+INSERT IGNORE INTO `Product` VALUES ('BRONZE','Bronze Hosting','Package','Monthly','Web Hosting  Domains - 500MB RAID-5 Storage, 20 Email Accounts, 24GB Bandwidth',14.99,30,6000,576000,3072,20);
+INSERT IGNORE INTO `Product` VALUES ('GOLD','Gold Hosting','Package','Monthly','Web Hosting  Domains - 2GB RAID-5 Storage, 40 Email Accounts, 80GB Bandwidth',40.99,60,24000,1920000,3072,100);
+INSERT IGNORE INTO `Product` VALUES ('MCLDSERV1000','Cloud Storage Server 1000','Service','Monthly','Upload, Sync and Share your files securely up to 1TB.',49.99,0,1048576,0,1024,0);
+INSERT IGNORE INTO `Product` VALUES ('PLATINUM','Platinum Hosting','Package','Monthly','Web Hosting  Domains - 7GB RAID-5 Storage, 60 Email Accounts, 100GB Bandwidth',69.99,90,84000,2400000,3072,0);
+INSERT IGNORE INTO `Product` VALUES ('PLATINUMPLUS','Platinum Plus paid monthly','Package','Monthly','Web Hosting  Domains - 10GB RAID-5 Storage, 300 Email Accounts, 500GB Bandwidth',129.98,450,120000,12000000,3072,0);
+INSERT IGNORE INTO `Product` VALUES ('SOHOBASIC','SiteBuilder Basic paid monthly','Package','Monthly','Web Hosting  Domains - 100MB RAID-5 Storage, 5 Email Accounts, 4GB Bandwidth.',19.95,10,1200,96000,3072,2);
+INSERT IGNORE INTO `Product` VALUES ('SSLCERTPREMIUM','Premium SSL Certificate (YR) 1 year','Service','Yearly',NULL,69.00,0,0,0,1024,0);
+INSERT IGNORE INTO `Product` VALUES ('YEARLYPREMIUMPRO','Premium Pro Yearly','Package','Yearly','Web Hosting - 3GB RAID Storage, 60 Email Accounts, 160GB Bandwidth',576.00,30,3000,160000,3072,10);
