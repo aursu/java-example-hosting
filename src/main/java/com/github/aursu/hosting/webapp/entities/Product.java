@@ -5,6 +5,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Product.findPackages", query = "select p from Product p where p.type = 'Package'"),
+        @NamedQuery(name = "Product.findServices", query = "select p from Product p where p.type = 'Service'")
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
