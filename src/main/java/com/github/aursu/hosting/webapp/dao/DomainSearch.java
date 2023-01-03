@@ -18,6 +18,7 @@ public class DomainSearch {
 
     private Domain domain;
     private Customer customer;
+    private Package product;
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;
@@ -28,5 +29,9 @@ public class DomainSearch {
 
     public String getPage(String  action) {
         return navigation.get(action);
+    }
+
+    public void unsetDomain() {
+        domain = null;
     }
 }

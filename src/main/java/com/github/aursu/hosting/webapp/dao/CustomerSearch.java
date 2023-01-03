@@ -17,8 +17,7 @@ public class CustomerSearch {
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;
-    private DomainSearch domainSearch;
-
+    
     public void addPage(String action, String webPage) {
         navigation.put(action, webPage);
     }
