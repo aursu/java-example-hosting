@@ -2,29 +2,77 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:if="${search.domain}" th:text="|Domain ${search.domain.id}|"></title>
-    <title th:unless="${search.domain}" th:text="|Domain ${search.domainName} not found|"></title>
+    <title th:text="|Domain ${search.domain.id}|"></title>
 </head>
 <body>
-<h1 th:replace="main.html :: mainHeader"></h1>
-<div th:if="${search.domain}">
+    <h1 th:replace="main.html :: mainHeader"></h1>
     <h3 th:text="|Domain ${search.domain.id}:|"></h3>
     <form action="#" th:action="@{/edit/domain}" th:object="${domain}" method="post">
-        <label for="editDomain">Domain: </label>
-        <input type="text" id="editDomain" th:field="*{id}" readonly="readonly" />
-        <button name="action" value="update" type="submit">Update</button>
-        <button name="action" value="back" type="submit">Back</button>
+    <table>
+        <tr>
+            <td><label for="editDomain">Domain: </label></td>
+            <td><input type="text" id="editDomain" th:field="*{id}" readonly="readonly" /></td>
+        </tr>
+        <th:block th:fragment="customer2Rows">
+        <tr>
+            <td>Customer:</td>
+            <td>
+                <table>
+                    <tr><td>ID:</td><td th:text="*{customer.id}"></td></tr>
+                    <tr><td>Name:</td><td th:text="|*{customer.firstName} *{customer.lastName}|"></td></tr>
+                    <tr><td>E-mail:</td><td th:text="*{customer.email}"></td></tr>
+                </table>
+                <input type="hidden" th:field="*{customer.id}" />
+            </td>
+        </tr>
+        <tr>
+            <td>Hoster:</td>
+            <td>
+                <table>
+                    <tr><td>ID:</td><td th:text="*{customer.hoster.id}"></td></tr>
+                    <tr><td>Name:</td><td th:text="*{customer.hoster.company}"></td></tr>
+                    <tr><td>Cluster:</td><td th:text="*{customer.hoster.cluster.name}"></td></tr>
+                    <tr><td>Region:</td><td th:text="*{customer.hoster.cluster.region}"></td></tr>
+                </table>
+            </td>
+        </tr>
+        </th:block>
+        <tr>
+            <td><label for="domainType">Domain Type: </label></td>
+            <td><input type="text" id="domainType" th:field="*{type}" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td>Password: </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="status">Status: </label></td>
+            <td><input type="text" id="status" th:field="*{status}" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label for="startDate">Start Date: </label></td>
+            <td><input type="text" id="startDate" th:field="*{startDate}" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td>Product: </td>
+            <td>
+                <table>
+                    <tr><td>Code:</td><td th:text="*{product.id}"></td></tr>
+                    <tr><td>Name:</td><td th:text="*{product.name}"></td></tr>
+                    <tr><td>Price:</td><td th:text="|USD *{product.price} *{product.billing}|"></td></tr>
+                    <tr><td>Web Quota:</td><td th:text="|*{product.quota} Mb|"></td></tr>
+                    <tr><td>Web &amp; FTP Traffic:</td><td th:text="|*{product.transferLimit} Mb|"></td></tr>
+                    <tr><td>Mailboxes:</td><td th:text="*{product.mailboxes}"></td></tr>
+                    <tr><td>Mail Quota (per mailbox):</td><td th:text="|*{product.mailQuota} Mb|"></td></tr>
+                    <tr><td>FTP Users:</td><td th:text="*{product.ftpUserLimit}"></td></tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><button name="action" value="back" type="submit">Back</button></td>
+            <td><button name="action" value="update" type="submit">Update</button></td>
+        </tr>
+    </table>
     </form>
-</div>
-<div th:unless="${search.domain}">
-    <h3 th:text="|Domain &quot;${search.domainName}&quot; not found.|"></h3>
-    <p>You can create it here</p>
-    <form action="#" th:action="@{/create/domain}" th:object="${search}" method="post">
-        <label for="createDomain">Domain: </label>
-        <input type="text" id="createDomain" th:field="*{domainName}" readonly="readonly" />
-        <button name="action" value="create" type="submit">Create</button>
-        <button name="action" value="back" type="submit">Back</button>
-    </form>
-</div>
 </body>
 </html>

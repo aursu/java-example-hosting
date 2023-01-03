@@ -10,15 +10,7 @@
 
 <form action="#" th:action="@{/create/domain/{domain}(domain=${domain.id})}" th:object="${domain}" method="post">
     <table>
-        <tr>
-            <td><p>For customer: </p></td>
-            <td>
-                <p th:text="|*{customer.id}: *{customer.firstName} *{customer.lastName} (*{customer.email})|"></p>
-                <p th:text="|Hoster: *{customer.hoster.company} (*{customer.hoster.id})|"></p>
-                <p th:text="|Cluster: *{customer.hoster.cluster.name} (*{customer.hoster.cluster.region})|"></p>
-                <input type="hidden" th:field="*{customer.id}" />
-            </td>
-        </tr>
+        <th:block th:replace="show/domain.html :: customer2Rows"></th:block>
         <tr>
             <td><label for="createDomain">Domain: </label></td>
             <td><input type="text" id="createDomain" th:field="*{id}" readonly="readonly" /></td>

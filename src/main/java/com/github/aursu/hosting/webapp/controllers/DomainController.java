@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,6 +32,7 @@ public class DomainController {
 
     @GetMapping(value = {"/search/domain"})
     public String showSearch(Model model, HttpServletRequest request) {
+
         domainSearch.addPage("back", request.getRequestURI());
         model.addAttribute("search", domainSearch);
 
@@ -117,26 +117,25 @@ public class DomainController {
 
             if (domainLookup.isPresent()) {
                 Domain domainEntity = domainLookup.get();
-
                 domainSearch.setDomain(domainEntity);
+
                 model.addAttribute("domain", domainEntity);
-            }
-            else {
-                // unset if not found
-                domainSearch.unsetDomain();
+                model.addAttribute("search", domainSearch);
+                return "/show/domain";
             }
 
+            // unset if not found
+            domainSearch.unsetDomain();
             model.addAttribute("search", domainSearch);
-            return "/show/domain";
+            return "/404/domain";
         }
-        else {
-            model.addAttribute("search", search);
-            return "/invalid/domain";
-        }
+
+        model.addAttribute("search", search);
+        return "/invalid/domain";
     }
 
     @PostMapping("/create/domain")
-    public String create(Model model, @ModelAttribute DomainSearch search, RedirectAttributes redirectAttributes) {
+    public String create(@ModelAttribute DomainSearch search, RedirectAttributes redirectAttributes) {
 
         // check if submit action is "back" (do not create)
         if (search.getAction().equals("back")) {
@@ -151,7 +150,7 @@ public class DomainController {
     }
 
     @PostMapping("/create/domain/{domainName}")
-    public String create(Model model, @ModelAttribute Domain domain, @PathVariable String domainName) {
+    public String create(@ModelAttribute Domain domain) {
         domainRepository.save(domain);
         return "redirect:/";
     }

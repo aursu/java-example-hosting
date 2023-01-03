@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="|Domain ${search.domainName} not found|"></title>
+</head>
+<body>
+    <h1 th:replace="main.html :: mainHeader"></h1>
+    <h3 th:text="|Domain &quot;${search.domainName}&quot; not found.|"></h3>
+    <p>You can create it here</p>
+    <form action="#" th:action="@{/create/domain}" th:object="${search}" method="post">
+        <label for="createDomain">Domain: </label>
+        <input type="text" id="createDomain" th:field="*{domainName}" readonly="readonly" />
+        <button name="action" value="create" type="submit">Create</button>
+        <button name="action" value="back" type="submit">Back</button>
+    </form>
+</body>
+</html>
