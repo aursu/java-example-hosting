@@ -1,7 +1,8 @@
 package com.github.aursu.hosting.webapp.controllers;
 
-import com.github.aursu.hosting.webapp.dao.CustomerSearch;
-import com.github.aursu.hosting.webapp.dao.DomainSearch;
+import com.github.aursu.hosting.webapp.beans.CustomerSearchBean;
+import com.github.aursu.hosting.webapp.model.CustomerSearch;
+import com.github.aursu.hosting.webapp.model.DomainSearch;
 import com.github.aursu.hosting.webapp.entities.Customer;
 import com.github.aursu.hosting.webapp.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -20,14 +21,17 @@ import java.util.Optional;
 public class CustomerController {
     private final CustomerRepository customerRepository;
 
-    private CustomerSearch customerSearch;
+    private CustomerSearchBean searchBean;
 
     @GetMapping("/search/customer")
     public String showSearch(Model model, @ModelAttribute("search") CustomerSearch search) {
+        CustomerSearch customerSearch = searchBean.getCustomerSearch();
 
         // copy navigation data into bean
         for (String action : search.getNavigation().keySet())
             customerSearch.addPage(action, search.getPage(action));
+
+        searchBean.setCustomerSearch(customerSearch);
 
         model.addAttribute("search", customerSearch);
         return "/search/customer";
@@ -35,12 +39,12 @@ public class CustomerController {
 
     @PostMapping("/search/customer")
     public String search(Model model, @ModelAttribute CustomerSearch search) {
-        // cancel customer search
+        CustomerSearch customerSearch = searchBean.getCustomerSearch();
+
         if (search.getAction().equals("back")) {
-            // in case of direct page access - set back button to page itself
-            if (customerSearch.getPage("back") == null)
-                // set back URL to /search/domain if not set any
-                customerSearch.addPage("back", "/search/customer");
+            if (customerSearch == null || customerSearch.getPage("back") == null)
+                return "redirect:/search/customer";
+
             return String.format("redirect:%s", customerSearch.getPage("back"));
         }
 
@@ -56,22 +60,30 @@ public class CustomerController {
 
         // added ability to cancel current search
         customerSearch.addPage("cancel", "/search/customer");
+        customerSearch.setFirstName(firstName);
+        customerSearch.setLastName(lastName);
+        customerSearch.setEmail(email);
+        searchBean.setCustomerSearch(customerSearch);
+
+        // not found
+        if (customerList.isEmpty())
+            return "redirect:/search/customer";
 
         model.addAttribute("search", customerSearch);
-        // not found
-        if (customerList.isEmpty()) {
-            return "/search/customer";
-        }
-        else {
-            model.addAttribute("customers", customerList);
-            return "/select/customer";
-        }
+        model.addAttribute("customers", customerList);
+
+        return "/select/customer";
     }
 
     @PostMapping("/select/customer")
-    public String select(Model model, @ModelAttribute CustomerSearch search, RedirectAttributes redirectAttributes) {
-        // check if submit action is "cancel" (do not create)
+    public String select(@ModelAttribute CustomerSearch search,
+                         RedirectAttributes redirectAttributes) {
+        CustomerSearch customerSearch = searchBean.getCustomerSearch();
+
         if (search.getAction().equals("cancel")) {
+            if (customerSearch.getPage("cancel") == null)
+                return "redirect:/search/customer";
+
             return String.format("redirect:%s", customerSearch.getPage("cancel"));
         }
 
@@ -79,15 +91,13 @@ public class CustomerController {
 
         // whatever reason for missed customerId - search it again
         if (customerId == null) {
-            model.addAttribute("search", customerSearch);
-            return "/search/customer";
+            return "redirect:/search/customer";
         }
 
         // lookup for customer and search again if not present
         Optional<Customer> customerLookup = customerRepository.findById(customerId);
-        if ( ! customerLookup.isPresent()) {
-            model.addAttribute("search", customerSearch);
-            return "/search/customer";
+        if (customerLookup.isEmpty()) {
+            return "redirect:/search/customer";
         }
 
         // if customer selected

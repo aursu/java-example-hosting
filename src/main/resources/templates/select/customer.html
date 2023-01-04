@@ -12,22 +12,37 @@
         <legend>Select customer</legend>
         <div>
             <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>E-mail</th>
+                    <th>Hoster</th>
+                    <th>select</th>
+                </tr>
+                </thead>
+                <tbody>
             <th:block th:each="c : ${customers}">
                 <tr>
                     <td th:text="${c.id}"></td>
+                    <td th:text="|${c.firstName} ${c.lastName}|"></td>
+                    <td th:text="${c.email}"></td>
                     <td>
-                        <p th:text="|${c.firstName} ${c.lastName} (${c.email})|"></p>
-                        <p th:text="|Hoster: ${c.hoster.company} (${c.hoster.id})|"></p>
-                        <p th:text="|Cluster: ${c.hoster.cluster.name} (${c.hoster.cluster.region})|"></p>
+                        <table>
+                            <tr><td>ID:</td><td th:text="${c.hoster.id}"></td></tr>
+                            <tr><td>Name:</td><td th:text="${c.hoster.company}"></td></tr>
+                            <tr><td>Cluster:</td><td th:text="${c.hoster.cluster.name}"></td></tr>
+                            <tr><td>Region:</td><td th:text="${c.hoster.cluster.region}"></td></tr>
+                        </table>
                     </td>
                     <td><input type="radio" th:field="*{customerId}" th:value="${c.id}" /></td>
                 </tr>
             </th:block>
                 <tr>
-                    <td></td>
-                    <td><button name="action" value="cancel" type="submit">Cancel</button></td>
+                    <td colspan="4"><button name="action" value="cancel" type="submit">Cancel</button></td>
                     <td><button name="action" value="select" type="submit">Select</button></td>
                 </tr>
+                </tbody>
             </table>
         </div>
     </fieldset>
