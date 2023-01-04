@@ -1,19 +1,19 @@
-package com.github.aursu.hosting.webapp.dao;
+package com.github.aursu.hosting.webapp.model;
 
 import lombok.Data;
-import org.springframework.stereotype.Component;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@Component
+@NoArgsConstructor
 public class CustomerSearch {
+    private Integer customerId;
+
     private String firstName;
     private String lastName;
     private String email;
-
-    private Integer customerId;
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;

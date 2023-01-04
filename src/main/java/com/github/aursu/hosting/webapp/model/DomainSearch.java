@@ -1,24 +1,22 @@
-package com.github.aursu.hosting.webapp.dao;
+package com.github.aursu.hosting.webapp.model;
 
 import com.github.aursu.hosting.webapp.entities.Customer;
 import com.github.aursu.hosting.webapp.entities.Domain;
-import lombok.AllArgsConstructor;
+import com.github.aursu.hosting.webapp.entities.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Data
-@Component
+@NoArgsConstructor
 public class DomainSearch {
     private String domainName;
 
     private Domain domain;
     private Customer customer;
-    private Package product;
+    private Product product;
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;
@@ -33,5 +31,19 @@ public class DomainSearch {
 
     public void unsetDomain() {
         domain = null;
+    }
+
+    public void unsetCustomer() {
+        customer = null;
+    }
+
+    public void unsetProduct() {
+        product = null;
+    }
+
+    public void unset() {
+        unsetDomain();
+        unsetCustomer();
+        unsetProduct();
     }
 }
