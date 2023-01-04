@@ -7,11 +7,12 @@
 <body>
     <h1 th:replace="main.html :: mainHeader"></h1>
     <h3 th:text="|Domain ${search.domain.id}:|"></h3>
-    <form action="#" th:action="@{/edit/domain}" th:object="${domain}" method="post">
+    <form action="#" th:action="@{/edit/domain}" th:object="${search}" method="post">
+        <input type="hidden" th:field="*{domainName}" />
     <table>
         <tr>
             <td><label for="editDomain">Domain: </label></td>
-            <td><input type="text" id="editDomain" th:field="*{id}" readonly="readonly" /></td>
+            <td><input type="text" id="editDomain" th:field="*{domain.id}" readonly="readonly" /></td>
         </tr>
         <th:block th:fragment="customer2Rows">
         <tr>
@@ -39,19 +40,19 @@
         </th:block>
         <tr>
             <td><label for="domainType">Domain Type: </label></td>
-            <td><input type="text" id="domainType" th:field="*{type}" readonly="readonly" /></td>
+            <td><input type="text" id="domainType" th:field="*{domain.type}" readonly="readonly" /></td>
         </tr>
         <tr>
             <td>Password: </td>
-            <td></td>
+            <td><button name="action" value="change" type="submit">Change</button></td>
         </tr>
         <tr>
             <td><label for="status">Status: </label></td>
-            <td><input type="text" id="status" th:field="*{status}" readonly="readonly" /></td>
+            <td><input type="text" id="status" th:field="*{domain.status}" readonly="readonly" /></td>
         </tr>
         <tr>
             <td><label for="startDate">Start Date: </label></td>
-            <td><input type="text" id="startDate" th:field="*{startDate}" readonly="readonly" /></td>
+            <td><input type="text" id="startDate" th:field="*{domain.startDate}" readonly="readonly" /></td>
         </tr>
         <tr>
             <td>Product: </td>

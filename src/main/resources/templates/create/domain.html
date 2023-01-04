@@ -6,19 +6,19 @@
 </head>
 <body>
 <h1 th:replace="main.html :: mainHeader"></h1>
-<h3 th:text="|Create domain &quot;${domain.id}&quot;|">Create domain</h3>
+<h3 th:text="|Create domain &quot;${search.domain.id}&quot;|">Create domain</h3>
 
-<form action="#" th:action="@{/create/domain/{domain}(domain=${domain.id})}" th:object="${domain}" method="post">
+<form action="#" th:action="@{/create/domain/{domain}(domain=${search.domain.id})}" th:object="${search}" method="post">
     <table>
         <th:block th:replace="show/domain.html :: customer2Rows"></th:block>
         <tr>
             <td><label for="createDomain">Domain: </label></td>
-            <td><input type="text" id="createDomain" th:field="*{id}" readonly="readonly" /></td>
+            <td><input type="text" id="createDomain" th:field="*{domain.id}" readonly="readonly" /></td>
         </tr>
         <tr>
             <td><label for="domainType">Domain Type: </label></td>
             <td>
-                <select id="domainType" th:field="*{type}">
+                <select id="domainType" th:field="*{domain.type}">
                     <option selected="selected" value="Regular">Regular</option>
                     <option value="Subdomain">Subdomain</option>
                 </select>
@@ -26,13 +26,13 @@
         </tr>
         <tr>
             <td><label for="password">Password: </label></td>
-            <td><input type="password" id="password" th:field="*{password}"
+            <td><input type="password" id="password" th:field="*{domain.password}"
                        minlength="8" required="required" /></td>
         </tr>
         <tr>
             <td><label for="status">Status: </label></td>
             <td>
-                <select id="status" th:field="*{status}">
+                <select id="status" th:field="*{domain.status}">
                     <option selected="selected" value="New">New</option>
                     <option value="OK">OK</option>
                     <option value="Suspend">Suspend</option>
@@ -44,14 +44,14 @@
             <td><label for="startDate">Start Date: </label></td>
             <td>
                 <input type="datetime-local" id="startDate"
-                       th:field="*{startDate}"
+                       th:field="*{domain.startDate}"
                        min="2022-10-01T00:00" required="required" />
             </td>
         </tr>
         <tr>
             <td><label for="product">Product: </label></td>
             <td>
-                <select th:field="*{product.id}" id="product">
+                <select id="product" th:field="*{product.id}">
                     <th:block th:each="p : ${packages}">
                     <option th:value="${p.id}" th:text="|${p.id}: ${p.name} - ${p.price} (${p.billing}) q:${p.quota} t:${p.transferLimit} m:${p.mailboxes} mq:${p.mailQuota} ftp:${p.ftpUserLimit}|"></option>
                     </th:block>
@@ -59,7 +59,7 @@
             </td>
         </tr>
         <tr>
-            <td><button name="action" value="back" type="submit">Back</button></td>
+            <td><button name="action" value="cancel" type="submit">Cancel</button></td>
             <td><button name="action" value="create" type="submit">Create</button></td>
         </tr>
     </table>
