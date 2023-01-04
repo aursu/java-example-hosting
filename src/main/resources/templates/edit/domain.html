@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="|Edit domain &quot;${search.domain.id}&quot;|">Edit domain</title>
+</head>
+<body>
+<h1 th:replace="main.html :: mainHeader"></h1>
+<h3 th:text="|Edit domain &quot;${search.domain.id}&quot;|">Edit domain</h3>
+
+<form action="#" th:action="@{/edit/domain/{domain}(domain=${search.domain.id})}" th:object="${search}" method="post">
+    <table>
+        <th:block th:replace="show/domain.html :: customer2Rows"></th:block>
+        <tr>
+            <td><label for="editDomain">Domain: </label></td>
+            <td><input type="text" id="editDomain" th:field="*{domain.id}" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label for="domainType">Domain Type: </label></td>
+            <td>
+                <select id="domainType" th:field="*{domain.type}">
+                    <option value="Regular">Regular</option>
+                    <option value="Subdomain">Subdomain</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Password: </td>
+            <td><button name="action" value="change" type="submit">Change</button></td>
+        </tr>
+        <tr>
+            <td><label for="status">Status: </label></td>
+            <td>
+                <select id="status" th:field="*{domain.status}">
+                    <option value="New">New</option>
+                    <option value="OK">OK</option>
+                    <option value="Suspend">Suspend</option>
+                    <option value="Disable">Disable</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="startDate">Start Date: </label></td>
+            <td>
+                <input type="text" id="startDate"
+                       th:field="*{domain.startDate}"
+                       readonly="readonly" />
+            </td>
+        </tr>
+        <tr>
+            <td><label for="product">Product: </label></td>
+            <td>
+                <select id="product" th:field="*{product.id}">
+                    <th:block th:each="p : ${packages}">
+                    <option th:value="${p.id}" th:text="|${p.id}: ${p.name} - ${p.price} (${p.billing}) q:${p.quota} t:${p.transferLimit} m:${p.mailboxes} mq:${p.mailQuota} ftp:${p.ftpUserLimit}|"></option>
+                    </th:block>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><button name="action" value="cancel" type="submit">Cancel</button></td>
+            <td><button name="action" value="update" type="submit">Update</button></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
