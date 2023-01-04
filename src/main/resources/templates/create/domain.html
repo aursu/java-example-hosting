@@ -9,6 +9,7 @@
 <h3 th:text="|Create domain &quot;${search.domain.id}&quot;|">Create domain</h3>
 
 <form action="#" th:action="@{/create/domain/{domain}(domain=${search.domain.id})}" th:object="${search}" method="post">
+    <input type="hidden" th:field="*{domainName}" />
     <table>
         <th:block th:replace="show/domain.html :: customer2Rows"></th:block>
         <tr>

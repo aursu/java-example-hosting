@@ -13,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class DomainSearch {
     private String domainName;
+    private String password1, password2;
 
     private Domain domain;
     private Customer customer;

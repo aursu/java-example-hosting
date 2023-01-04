@@ -50,6 +50,17 @@ public class DomainController {
         return "main";
     }
 
+    private String showDomain(Model model, String domainName, DomainSearch domainSearch) {
+        domainSearch.setDomainName(domainName);
+
+        // all cancellation actions and password update actions return to domain show page
+        domainSearch.addPage("cancel-password", String.format("/show/domain/%s", domainName));
+        domainSearch.addPage("update-password", String.format("/show/domain/%s", domainName));
+        domainSearch.addPage("cancel", String.format("/show/domain/%s", domainName));
+
+        return navigateTo(model, "/show/domain", domainSearch);
+    }
+
     @PostMapping("/search/domain")
     public String search(Model model, @ModelAttribute DomainSearch search) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
@@ -63,18 +74,13 @@ public class DomainController {
         }
 
         String domain = search.getDomainName();
-        domainSearch.setDomainName(domain);
 
-        return navigateTo(model, "/show/domain", domainSearch);
+        return showDomain(model, domain, domainSearch);
     }
 
-    @GetMapping(value = {"/show/domain/{domain}"})
-    public String showDomain(Model model, @PathVariable String domain) {
-        DomainSearch domainSearch = searchBean.getDomainSearch();
-
-        domainSearch.setDomainName(domain);
-
-        return navigateTo(model, "/show/domain", domainSearch);
+    @GetMapping(value = {"/show/domain/{domainName}"})
+    public String showDomain(Model model, @PathVariable String domainName) {
+        return showDomain(model, domainName, searchBean.getDomainSearch());
     }
 
     private String navigateTo(Model model, String path, DomainSearch domainSearch) {
@@ -189,8 +195,8 @@ public class DomainController {
         return searchCustomer(redirectAttributes);
     }
 
-    @PostMapping("/create/domain/{ignoredDomainName}")
-    public String create(@ModelAttribute DomainSearch search, @PathVariable String ignoredDomainName) {
+    @PostMapping("/create/domain/{domainName}")
+    public String create(@ModelAttribute DomainSearch search, @PathVariable String domainName) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
 
         // check if submit action is "back" (do not create)
@@ -213,12 +219,15 @@ public class DomainController {
         // save it to database
         domainRepository.save(domain);
 
-        return String.format("redirect:/show/domain/%s", search.getDomainName());
+        return String.format("redirect:/show/domain/%s", domainName);
     }
 
     @PostMapping("/edit/domain")
     public String edit(Model model, @ModelAttribute DomainSearch search) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        String domainName = search.getDomainName() == null ?
+                domainSearch.getDomainName() : search.getDomainName();
 
         // check if submit action is "back" (do not edit)
         if (search.getAction().equals("back")) {
@@ -228,10 +237,48 @@ public class DomainController {
             return String.format("redirect:%s", domainSearch.getPage("back"));
         }
 
+        // password change
+        if (search.getAction().equals("change-password")) {
+            model.addAttribute("search", domainSearch);
+            return "/edit/password/domain";
+        }
+
+        if (search.getAction().equals("cancel-password")) {
+            if (domainSearch.getPage("cancel-password") == null)
+                return String.format("redirect:/show/domain/%s", domainName);
+
+            return String.format("redirect:%s", domainSearch.getPage("cancel-password"));
+        }
+
+        // update password
+        if (search.getAction().equals("update-password")) {
+            domainService.updatePassword(domainSearch.getDomain(), search.getPassword1(), search.getPassword2());
+
+            if (domainSearch.getPage("update-password") == null)
+                return String.format("redirect:/show/domain/%s", domainName);
+
+            return String.format("redirect:%s", domainSearch.getPage("update-password"));
+        }
+
         // we need packages to edit domain
         List<Product> packages = productRepository.findPackages();
         model.addAttribute("packages", packages);
 
-        return navigateTo(model, "/edit/domain", search);
+        return navigateTo(model, "/edit/domain", domainSearch);
+    }
+
+    @PostMapping("/edit/domain/{domainName}")
+    public String edit(Model model, @ModelAttribute DomainSearch search, @PathVariable String domainName) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        // check if submit action is "back" (do not create)
+        if (search.getAction().equals("cancel")) {
+            if (domainSearch.getPage("cancel") == null)
+                return "redirect:/search/domain";
+
+            return String.format("redirect:%s", domainSearch.getPage("cancel"));
+        }
+
+        return String.format("redirect:/show/domain/%s", domainName);
     }
 }

@@ -9,6 +9,7 @@
 <h3 th:text="|Edit domain &quot;${search.domain.id}&quot;|">Edit domain</h3>
 
 <form action="#" th:action="@{/edit/domain/{domain}(domain=${search.domain.id})}" th:object="${search}" method="post">
+    <input type="hidden" th:field="*{domainName}" />
     <table>
         <th:block th:replace="show/domain.html :: customer2Rows"></th:block>
         <tr>
@@ -23,10 +24,6 @@
                     <option value="Subdomain">Subdomain</option>
                 </select>
             </td>
-        </tr>
-        <tr>
-            <td>Password: </td>
-            <td><button name="action" value="change" type="submit">Change</button></td>
         </tr>
         <tr>
             <td><label for="status">Status: </label></td>
@@ -45,6 +42,22 @@
                 <input type="text" id="startDate"
                        th:field="*{domain.startDate}"
                        readonly="readonly" />
+            </td>
+        </tr>
+        <tr>
+            <td><label for="suspendDate">Suspend Date: </label></td>
+            <td>
+                <input type="datetime-local" id="suspendDate"
+                       th:field="*{domain.suspendDate}"
+                       th:min="*{domain.startDate}" />
+            </td>
+        </tr>
+        <tr>
+            <td><label for="expireDate">Expire Date: </label></td>
+            <td>
+                <input type="datetime-local" id="expireDate"
+                       th:field="*{domain.expireDate}"
+                       th:min="*{domain.startDate}" />
             </td>
         </tr>
         <tr>

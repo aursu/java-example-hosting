@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Change password for </title>
+    <title th:text="|Change password for &quot;${search.domain.id}&quot;|">Change password</title>
+</head>
+<body>
+<h1 th:replace="main.html :: mainHeader"></h1>
+<h3 th:text="|Change password for domain &quot;${search.domain.id}&quot;|"></h3>
+
+<form action="#" th:action="@{/edit/domain}" th:object="${search}" method="post">
+    <table>
+        <tr>
+            <td><label for="createDomain">Domain: </label></td>
+            <td><input type="text" id="createDomain" th:field="*{domain.id}" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label for="password">Password: </label></td>
+            <td><input type="password" id="password" th:field="*{password1}"
+                       minlength="8" required="required" /></td>
+        </tr>
+        <tr>
+            <td><label for="confirm">Confirm password: </label></td>
+            <td><input type="password" id="confirm" th:field="*{password2}"
+                       minlength="8" required="required" /></td>
+        </tr>
+        <tr>
+            <td><button type="button" onclick="document.cancelUpdate.submit()">Cancel</button></td>
+            <td><button name="action" value="update-password" type="submit">Update</button></td>
+        </tr>
+    </table>
+</form>
+<form action="#" th:action="@{/edit/domain}" th:object="${search}" method="post" name="cancelUpdate">
+    <input type="hidden" name="action" value="cancel-password" />
+</form>
+</body>
+</html>
