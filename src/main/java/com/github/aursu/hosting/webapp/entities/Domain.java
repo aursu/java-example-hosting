@@ -4,11 +4,14 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Domain.findParents", query = "select d from Domain d where d.customer.id = :customerId and upper(:subdomain) like upper(concat('%', d.id))")
+})
 public class Domain {
     @Id
     @Column(name = "Domain", nullable = false)
@@ -41,7 +44,7 @@ public class Domain {
     private Customer customer;
 
     @OneToMany(mappedBy = "domain")
-    private Set<DomainHostingService> domainServices = new LinkedHashSet<>();
+    private List<DomainHostingService> domainServices = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PrimaryDomain")
@@ -127,11 +130,11 @@ public class Domain {
         this.customer = customer;
     }
 
-    public Set<DomainHostingService> getDomainServices() {
+    public List<DomainHostingService> getDomainServices() {
         return domainServices;
     }
 
-    public void setDomainServices(Set<DomainHostingService> domainServices) {
+    public void setDomainServices(List<DomainHostingService> domainServices) {
         this.domainServices = domainServices;
     }
 

@@ -3,8 +3,8 @@ package com.github.aursu.hosting.webapp.entities;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Entity
@@ -76,7 +76,7 @@ public class Customer {
     private Hoster hoster;
 
     @OneToMany(mappedBy = "customer")
-    private Set<Domain> domains = new LinkedHashSet<>();
+    private List<Domain> domains = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -238,11 +238,11 @@ public class Customer {
         this.hoster = hoster;
     }
 
-    public Set<Domain> getDomains() {
+    public List<Domain> getDomains() {
         return domains;
     }
 
-    public void setDomains(Set<Domain> domains) {
+    public void setDomains(List<Domain> domains) {
         this.domains = domains;
     }
 

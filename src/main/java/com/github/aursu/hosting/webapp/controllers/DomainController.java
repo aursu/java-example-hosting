@@ -217,7 +217,7 @@ public class DomainController {
         domain.setProduct(search.getProduct());
 
         // save it to database
-        domainRepository.save(domain);
+        domainService.createDomain(domain);
 
         return String.format("redirect:/show/domain/%s", domainName);
     }
@@ -278,6 +278,18 @@ public class DomainController {
 
             return String.format("redirect:%s", domainSearch.getPage("cancel"));
         }
+
+        // extract domain from DomainSearch object
+        Domain domain = search.getDomain();
+
+        // setup customer from  session
+        domain.setCustomer(search.getCustomer());
+
+        // setup product from DomainSearch object
+        domain.setProduct(search.getProduct());
+
+        // update it in database
+        domainService.updateDomain(domain);
 
         return String.format("redirect:/show/domain/%s", domainName);
     }
