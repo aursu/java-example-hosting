@@ -46,7 +46,7 @@ public class Domain {
     @OneToMany(mappedBy = "domain")
     private List<DomainHostingService> domainServices = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PrimaryDomain")
     private Domain primaryDomain;
 

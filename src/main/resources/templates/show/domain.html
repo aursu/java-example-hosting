@@ -69,6 +69,10 @@
                 </table>
             </td>
         </tr>
+        <tr th:if="*{domain.primaryDomain}">
+            <td><label for="primaryDomain">Primary domain: </label></td>
+            <td><input type="text" id="primaryDomain" th:field="*{domain.primaryDomain.id}" readonly="readonly" /></td>
+        </tr>
         <tr>
             <td><button name="action" value="back" type="submit">Back</button></td>
             <td><button name="action" value="update" type="submit">Update</button></td>

@@ -50,17 +50,6 @@ public class DomainController {
         return "main";
     }
 
-    private String showDomain(Model model, String domainName, DomainSearch domainSearch) {
-        domainSearch.setDomainName(domainName);
-
-        // all cancellation actions and password update actions return to domain show page
-        domainSearch.addPage("cancel-password", String.format("/show/domain/%s", domainName));
-        domainSearch.addPage("update-password", String.format("/show/domain/%s", domainName));
-        domainSearch.addPage("cancel", String.format("/show/domain/%s", domainName));
-
-        return navigateTo(model, "/show/domain", domainSearch);
-    }
-
     @PostMapping("/search/domain")
     public String search(Model model, @ModelAttribute DomainSearch search) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
@@ -81,57 +70,6 @@ public class DomainController {
     @GetMapping(value = {"/show/domain/{domainName}"})
     public String showDomain(Model model, @PathVariable String domainName) {
         return showDomain(model, domainName, searchBean.getDomainSearch());
-    }
-
-    private String navigateTo(Model model, String path, DomainSearch domainSearch) {
-        int status = setupDomain(domainSearch);
-
-        model.addAttribute("search", domainSearch);
-
-        if (status == 400) return "/invalid/domain";
-        if (status == 404) return "/404/domain";
-
-        // store domain into Bean
-        searchBean.setDomainSearch(domainSearch);
-
-        return path;
-    }
-
-    private int setupDomain(DomainSearch search) {
-        String domain = search.getDomainName();
-
-        if (domainService.isValidDomain(domain)) {
-            Optional<Domain> domainLookup = domainRepository.findById(domain);
-
-            if (domainLookup.isPresent()) {
-                Domain domainEntity = domainLookup.get();
-
-                search.setDomain(domainEntity);
-                search.setCustomer(domainEntity.getCustomer());
-                search.setProduct(domainEntity.getProduct());
-
-                return 200;
-            }
-
-            // unset if not found
-            search.unset();
-            return 404;
-        }
-        return 400;
-    }
-
-    private String searchCustomer(RedirectAttributes redirectAttributes) {
-        // Now we need customer to create domain for. Look for it up and return to domain creation
-        CustomerSearch customerSearch = new CustomerSearch();
-
-        // we can create domain only when customer has been found and returned
-        customerSearch.addPage("select", "/create/domain");
-
-        // if customer could not be found, then return to domain search again
-        customerSearch.addPage("back", "/search/domain");
-
-        redirectAttributes.addFlashAttribute("search", customerSearch);
-        return "redirect:/search/customer";
     }
 
     @GetMapping(value = {"/create/domain"})
@@ -292,5 +230,67 @@ public class DomainController {
         domainService.updateDomain(domain);
 
         return String.format("redirect:/show/domain/%s", domainName);
+    }
+
+    private String showDomain(Model model, String domainName, DomainSearch domainSearch) {
+        domainSearch.setDomainName(domainName);
+
+        // all cancellation actions and password update actions return to domain show page
+        domainSearch.addPage("cancel-password", String.format("/show/domain/%s", domainName));
+        domainSearch.addPage("update-password", String.format("/show/domain/%s", domainName));
+        domainSearch.addPage("cancel", String.format("/show/domain/%s", domainName));
+
+        return navigateTo(model, "/show/domain", domainSearch);
+    }
+
+    private String navigateTo(Model model, String path, DomainSearch domainSearch) {
+        int status = setupDomain(domainSearch);
+
+        model.addAttribute("search", domainSearch);
+
+        if (status == 400) return "/invalid/domain";
+        if (status == 404) return "/404/domain";
+
+        // store domain into Bean
+        searchBean.setDomainSearch(domainSearch);
+
+        return path;
+    }
+
+    private int setupDomain(DomainSearch search) {
+        String domain = search.getDomainName();
+
+        if (domainService.isValidDomain(domain)) {
+            Optional<Domain> domainLookup = domainRepository.findById(domain);
+
+            if (domainLookup.isPresent()) {
+                Domain domainEntity = domainLookup.get();
+
+                search.setDomain(domainEntity);
+                search.setCustomer(domainEntity.getCustomer());
+                search.setProduct(domainEntity.getProduct());
+
+                return 200;
+            }
+
+            // unset if not found
+            search.unset();
+            return 404;
+        }
+        return 400;
+    }
+
+    private String searchCustomer(RedirectAttributes redirectAttributes) {
+        // Now we need customer to create domain for. Look for it up and return to domain creation
+        CustomerSearch customerSearch = new CustomerSearch();
+
+        // we can create domain only when customer has been found and returned
+        customerSearch.addPage("select", "/create/domain");
+
+        // if customer could not be found, then return to domain search again
+        customerSearch.addPage("back", "/search/domain");
+
+        redirectAttributes.addFlashAttribute("search", customerSearch);
+        return "redirect:/search/customer";
     }
 }
