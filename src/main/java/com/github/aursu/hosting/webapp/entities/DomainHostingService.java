@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "DomainService")
+@NamedQueries({
+        @NamedQuery(name = "DomainHostingService.findByDomain", query = "select d from DomainHostingService d where d.domain = :domain"),
+        @NamedQuery(name = "DomainHostingService.findByDomainName", query = "select d from DomainHostingService d where d.domain.id = :domain")
+})
 public class DomainHostingService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
