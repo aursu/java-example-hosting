@@ -12,8 +12,8 @@
 <form action="#" th:action="@{/edit/domain}" th:object="${search}" method="post">
     <table>
         <tr>
-            <td><label for="createDomain">Domain: </label></td>
-            <td><input type="text" id="createDomain" th:field="*{domain.id}" readonly="readonly" /></td>
+            <td><label for="domainName">Domain: </label></td>
+            <td><input type="text" id="domainName" th:field="*{domain.id}" readonly="readonly" /></td>
         </tr>
         <tr>
             <td><label for="password">Password: </label></td>
