@@ -7,7 +7,6 @@
 <body>
 <h1 th:replace="main.html :: mainHeader"></h1>
 <h3 th:text="|Edit domain &quot;${search.domain.id}&quot;|">Edit domain</h3>
-
 <form action="#" th:action="@{/edit/domain/{domain}(domain=${search.domain.id})}" th:object="${search}" method="post">
     <input type="hidden" th:field="*{domainName}" />
     <table>
@@ -67,7 +66,7 @@
             <td>
                 <select id="product" th:field="*{product.id}">
                     <th:block th:each="p : ${packages}">
-                    <option th:value="${p.id}" th:text="|${p.id}: ${p.name} - ${p.price} (${p.billing}) q:${p.quota} t:${p.transferLimit} m:${p.mailboxes} mq:${p.mailQuota} ftp:${p.ftpUserLimit}|"></option>
+                        <option th:value="${p.id}" th:text="|${p.id}: ${p.name} - ${p.price} (${p.billing}) q:${p.quota} t:${p.transferLimit} m:${p.mailboxes} mq:${p.mailQuota} ftp:${p.ftpUserLimit}|"></option>
                     </th:block>
                 </select>
             </td>
@@ -78,5 +77,66 @@
         </tr>
     </table>
 </form>
+<form  action="#" th:action="@{/add/domain/service}" th:object="${search}" method="post">
+    <table>
+        <tr>
+            <th colspan="2">Add service to domain: </th>
+        </tr>
+        <tr>
+            <td><label for="service">Service: </label></td>
+            <td>
+                <select id="service" th:field="*{service.product.id}">
+                    <th:block th:each="s : ${services}">
+                        <option th:value="${s.id}" th:text="|${s.id}: ${s.name} - ${s.price} (${s.billing}) q:${s.quota} t:${s.transferLimit} m:${s.mailboxes} mq:${s.mailQuota} ftp:${s.ftpUserLimit}|"></option>
+                    </th:block>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><button name="action" value="cancel" type="submit">Cancel</button></td>
+            <td><button name="action" value="create" type="submit">Add</button></td>
+        </tr>
+    </table>
+</form>
+<th:block th:if="${#lists.size(domainServices) > 0}">
+    <form  action="#" th:action="@{/edit/domain/service}" th:object="${search}" method="post">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product Code</th>
+                <th>Name</th>
+                <th>Product Price</th>
+                <th>Billing period</th>
+                <th>Additional resources</th>
+                <th>Sale Price</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="s : ${domainServices}">
+                <tr>
+                    <td th:text="${s.id}">ID</td>
+                    <td th:text="${s.product.id}">Product Code</td>
+                    <td th:text="${s.product.name}">Name</td>
+                    <td th:text="${s.product.price}">Product Price</td>
+                    <td th:text="${s.product.billing}">Billing period</td>
+                    <td th:text="|q:${s.product.quota} t:${s.product.transferLimit} m:${s.product.mailboxes} mq:${s.product.mailQuota} ftp:${s.product.ftpUserLimit}|">Additional resources</td>
+                    <td th:text="${s.price}">Sale Price</td>
+                    <td th:text="${s.status}">Status</td>
+                    <td><input type="radio" th:field="*{service.id}" th:value="${s.id}" /></td>
+                </tr>
+            </th:block>
+            <tr>
+                <td colspan="6"></td>
+                <td><button name="action" value="cancel" type="submit">Cancel</button></td>
+                <td><button name="action" value="update" type="submit">Edit</button></td>
+                <td><button name="action" value="delete" type="submit">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</th:block>
 </body>
 </html>
