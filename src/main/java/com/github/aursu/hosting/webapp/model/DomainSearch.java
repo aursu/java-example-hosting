@@ -2,6 +2,7 @@ package com.github.aursu.hosting.webapp.model;
 
 import com.github.aursu.hosting.webapp.entities.Customer;
 import com.github.aursu.hosting.webapp.entities.Domain;
+import com.github.aursu.hosting.webapp.entities.DomainHostingService;
 import com.github.aursu.hosting.webapp.entities.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ public class DomainSearch {
     private Domain domain;
     private Customer customer;
     private Product product;
+
+    private DomainHostingService service;
 
     private Map<String, String> navigation = new HashMap<>();
     private String action;
