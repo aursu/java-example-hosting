@@ -37,16 +37,23 @@ public class CustomerController {
         return "/search/customer";
     }
 
-    @PostMapping("/search/customer")
-    public String search(Model model, @ModelAttribute CustomerSearch search) {
+    @PostMapping(
+            value = "/search/customer",
+            params = "action=back")
+    public String backSearch() {
         CustomerSearch customerSearch = searchBean.getCustomerSearch();
 
-        if (search.getAction().equals("back")) {
-            if (customerSearch == null || customerSearch.getPage("back") == null)
-                return "redirect:/search/customer";
+        if (customerSearch.getPage("back") == null)
+            return "redirect:/search/customer";
 
-            return String.format("redirect:%s", customerSearch.getPage("back"));
-        }
+        return String.format("redirect:%s", customerSearch.getPage("back"));
+    }
+
+    @PostMapping(
+            value = "/search/customer",
+            params = "action=search")
+    public String search(Model model, @ModelAttribute CustomerSearch search) {
+        CustomerSearch customerSearch = searchBean.getCustomerSearch();
 
          String email = search.getEmail(),
                 firstName = search.getFirstName(),
@@ -60,9 +67,11 @@ public class CustomerController {
 
         // added ability to cancel current search
         customerSearch.addPage("cancel", "/search/customer");
+
         customerSearch.setFirstName(firstName);
         customerSearch.setLastName(lastName);
         customerSearch.setEmail(email);
+
         searchBean.setCustomerSearch(customerSearch);
 
         // not found
@@ -75,17 +84,24 @@ public class CustomerController {
         return "/select/customer";
     }
 
-    @PostMapping("/select/customer")
+    @PostMapping(
+            value = "/select/customer",
+            params = "action=cancel")
+    public String cancelSelect() {
+        CustomerSearch customerSearch = searchBean.getCustomerSearch();
+
+        if (customerSearch.getPage("cancel") == null)
+            return "redirect:/search/customer";
+
+        return String.format("redirect:%s", customerSearch.getPage("cancel"));
+    }
+
+    @PostMapping(
+            value = "/select/customer",
+            params = "action=select")
     public String select(@ModelAttribute CustomerSearch search,
                          RedirectAttributes redirectAttributes) {
         CustomerSearch customerSearch = searchBean.getCustomerSearch();
-
-        if (search.getAction().equals("cancel")) {
-            if (customerSearch.getPage("cancel") == null)
-                return "redirect:/search/customer";
-
-            return String.format("redirect:%s", customerSearch.getPage("cancel"));
-        }
 
         Integer customerId = search.getCustomerId();
 
