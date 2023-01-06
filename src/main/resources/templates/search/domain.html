@@ -2,11 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Search domain</title>
+    <title th:text="${pageTitle} ?: 'Search domain'"></title>
 </head>
 <body>
 <h1 th:replace="main.html :: mainHeader"></h1>
-<h3 th:replace="main.html :: searchHeader"></h3>
-<div th:replace="main.html :: searchForm" />
+<h3 th:text="${message} ?: 'Search for Domain'"></h3>
+<form action="#" th:action="@{/search/domain}" th:object="${search}" method="post" th:fragment="searchForm">
+    <label for="domain">Domain</label>
+    <input type="text" id="domain" th:field="*{domainName}" />
+    <button name="action" value="search" type="submit">Search</button>
+    <button name="action" value="back" type="submit">Back</button>
+</form>
 </body>
 </html>
