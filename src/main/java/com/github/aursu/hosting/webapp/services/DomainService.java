@@ -78,7 +78,7 @@ public class DomainService {
 
     public boolean createDomain(Domain domain) {
         if( ! isValidDomain(domain)) return false;
-        
+
         domainRepository.save(setParentDomain(domain));
 
         return true;
