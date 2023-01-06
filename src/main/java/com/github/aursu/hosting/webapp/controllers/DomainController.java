@@ -1,12 +1,13 @@
 package com.github.aursu.hosting.webapp.controllers;
 
 import com.github.aursu.hosting.webapp.beans.DomainSearchBean;
+import com.github.aursu.hosting.webapp.entities.DomainHostingService;
 import com.github.aursu.hosting.webapp.model.CustomerSearch;
 import com.github.aursu.hosting.webapp.model.DomainSearch;
 import com.github.aursu.hosting.webapp.entities.Customer;
 import com.github.aursu.hosting.webapp.entities.Domain;
 import com.github.aursu.hosting.webapp.entities.Product;
-import com.github.aursu.hosting.webapp.repositories.DomainRepository;
+import com.github.aursu.hosting.webapp.repositories.DomainHostingServiceRepository;
 import com.github.aursu.hosting.webapp.repositories.ProductRepository;
 import com.github.aursu.hosting.webapp.services.DomainService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,67 +21,140 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
 public class DomainController {
-    private final DomainRepository domainRepository;
     private final ProductRepository productRepository;
+    private final DomainHostingServiceRepository serviceRepository;
 
     private final DomainService domainService;
 
     private DomainSearchBean searchBean;
 
-    @GetMapping(value = {"/search/domain"})
-    public String showSearch(Model model, HttpServletRequest request) {
-
-        DomainSearch search = searchBean.getDomainSearch();
-        search.addPage("back", request.getRequestURI());
-
-        searchBean.setDomainSearch(search);
-        model.addAttribute("search", search);
-
-        return "/search/domain";
-    }
-
     @GetMapping(value = {"/"})
     public String index(Model model, HttpServletRequest request) {
-        showSearch(model, request);
-        return "main";
+        // title page  has own title "Hosting Platform"
+        model.addAttribute("pageTitle", "Hosting Platform");
+
+        return showSearchForm(model, request);
     }
 
-    @PostMapping("/search/domain")
-    public String search(Model model, @ModelAttribute DomainSearch search) {
+    @GetMapping(value = {"/search/domain"})
+    public String showSearch(Model model, HttpServletRequest request) {
+        return showSearchForm(model, request);
+    }
+
+    @PostMapping(
+            value = {
+                    "/search/domain",
+                    "/edit/domain",
+                    "/create/domain"
+            },
+            params = "action=back")
+    public String searchBack() {
         DomainSearch domainSearch = searchBean.getDomainSearch();
 
-        // check if submit action is "back" (do not search)
-        if (search.getAction().equals("back")) {
-            if (domainSearch.getPage("back") == null)
-                return "redirect:/search/domain";
+        if (domainSearch.getPage("back") == null)
+            return "redirect:/search/domain";
 
-            return String.format("redirect:%s", domainSearch.getPage("back"));
-        }
+        return String.format("redirect:%s", domainSearch.getPage("back"));
+    }
 
-        String domain = search.getDomainName();
+    @PostMapping(
+            value = "/search/domain",
+            params = "action=search")
+    public String actionSearch(Model model, @ModelAttribute DomainSearch search) {
+        return showDomain(model, search.getDomainName());
+    }
 
-        return showDomain(model, domain, domainSearch);
+    @PostMapping(
+            value = "/edit/domain",
+            params = "action=change-password")
+    public String editDomainChangePassword(Model model, @ModelAttribute DomainSearch search) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        model.addAttribute("search", domainSearch);
+        return "/edit/password/domain";
+    }
+
+    @PostMapping(
+            value = "/edit/domain",
+            params = "action=cancel-password")
+    public String cancelPasswordEdit() {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        if (domainSearch.getPage("cancel-password") == null)
+            return String.format("redirect:/show/domain/%s", domainSearch.getDomainName());
+
+        return String.format("redirect:%s", domainSearch.getPage("cancel-password"));
+    }
+
+    @PostMapping(
+            value = "/edit/domain",
+            params = "action=update-password")
+    public String updatePassword(@ModelAttribute DomainSearch search) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        domainService.updatePassword(domainSearch.getDomain(), search.getPassword1(), search.getPassword2());
+
+        if (domainSearch.getPage("update-password") == null)
+            return String.format("redirect:/show/domain/%s", domainSearch.getDomainName());
+
+        return String.format("redirect:%s", domainSearch.getPage("update-password"));
     }
 
     @GetMapping(value = {"/show/domain/{domainName}"})
-    public String showDomain(Model model, @PathVariable String domainName) {
-        return showDomain(model, domainName, searchBean.getDomainSearch());
+    public String showDomainByName(Model model, @PathVariable String domainName) {
+        return showDomain(model, domainName);
     }
 
-    @GetMapping(value = {"/create/domain"})
+    @PostMapping(
+            value = "/edit/domain",
+            params = "action=update")
+    public String editDomainForm(Model model, @ModelAttribute DomainSearch search) {
+        return showEditDomainForm(model);
+    }
+
+    @PostMapping(
+            value = "/edit/domain/{domainName}",
+            params = "action=cancel")
+    public String cancelEditDomain(@PathVariable String domainName) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        if (domainSearch.getPage("cancel") == null)
+            return String.format("redirect:/search/domain/%s", domainName);
+
+        return String.format("redirect:%s", domainSearch.getPage("cancel"));
+    }
+
+    @PostMapping(
+            value = "/edit/domain/{ignoredDomainName}",
+            params = "action=update")
+    public String editDomain(Model model, @ModelAttribute DomainSearch search, @PathVariable String ignoredDomainName) {
+        // extract domain from DomainSearch object
+        Domain domain = search.getDomain();
+
+        // setup customer from  session
+        domain.setCustomer(search.getCustomer());
+
+        // setup product from DomainSearch object
+        domain.setProduct(search.getProduct());
+
+        // update it in database
+        domainService.updateDomain(domain);
+
+        return showEditDomainForm(model);
+    }
+
+    @GetMapping("/create/domain")
     public String showCreate(Model model, @ModelAttribute("search") DomainSearch search, RedirectAttributes redirectAttributes) {
         // restore navigation after redirect to CustomerController
         DomainSearch domainSearch = searchBean.getDomainSearch();
-
-        String domain = domainSearch.getDomainName();
+        String domainName = domainSearch.getDomainName();
 
         // probably direct access to /create/domain URL
-        if (domain == null) {
+        if (domainName == null) {
             return "redirect:/search/domain";
         }
 
@@ -94,10 +168,13 @@ public class DomainController {
 
         // provide domain and customer into template
         Domain domainEntity = new Domain();
-        domainEntity.setId(domain);
+        domainEntity.setId(domainName);
 
         // store domain into session
         domainSearch.setDomain(domainEntity);
+
+        // when cancelled - search for new domain
+        domainSearch.addPage("cancel", "/search/domain");
 
         // store it into session
         searchBean.setDomainSearch(domainSearch);
@@ -111,21 +188,15 @@ public class DomainController {
         return "/create/domain";
     }
 
-    @PostMapping("/create/domain")
-    public String create(RedirectAttributes redirectAttributes, @ModelAttribute DomainSearch search) {
+    @PostMapping(
+            value = "/create/domain",
+            params = "action=create")
+    public String selectCustomer(RedirectAttributes redirectAttributes, @ModelAttribute DomainSearch search) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
 
-        // check if submit action is "back" (do not create)
-        if (search.getAction().equals("back")) {
-            if (domainSearch.getPage("back") == null)
-                return "redirect:/search/domain";
-
-            return String.format("redirect:%s", domainSearch.getPage("back"));
-        }
-
         // save domain name to create it later
-        String domain = search.getDomainName();
-        domainSearch.setDomainName(domain);
+        String domainName = search.getDomainName();
+        domainSearch.setDomainName(domainName);
 
         // store current domain search before redirect
         searchBean.setDomainSearch(domainSearch);
@@ -133,17 +204,23 @@ public class DomainController {
         return searchCustomer(redirectAttributes);
     }
 
-    @PostMapping("/create/domain/{domainName}")
-    public String create(@ModelAttribute DomainSearch search, @PathVariable String domainName) {
+    @PostMapping(
+            value = "/create/domain/{ignoredDomainName}",
+            params = "action=cancel")
+    public String cancelCreate(@PathVariable String ignoredDomainName) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
 
         // check if submit action is "back" (do not create)
-        if (search.getAction().equals("cancel")) {
-            if (domainSearch.getPage("cancel") == null)
-                return "redirect:/create/domain";
+        if (domainSearch.getPage("cancel") == null)
+            return "redirect:/search/domain";
 
-            return String.format("redirect:%s", domainSearch.getPage("cancel"));
-        }
+        return String.format("redirect:%s", domainSearch.getPage("cancel"));
+    }
+
+    @PostMapping(
+            value = "/create/domain/{domainName}",
+            params = "action=create")
+    public String create(@ModelAttribute DomainSearch search, @PathVariable String domainName) {
 
         // extract domain from DomainSearch object
         Domain domain = search.getDomain();
@@ -160,85 +237,13 @@ public class DomainController {
         return String.format("redirect:/show/domain/%s", domainName);
     }
 
-    @PostMapping("/edit/domain")
-    public String edit(Model model, @ModelAttribute DomainSearch search) {
+    private String showDomain(Model model, String domainName) {
         DomainSearch domainSearch = searchBean.getDomainSearch();
 
-        String domainName = search.getDomainName() == null ?
-                domainSearch.getDomainName() : search.getDomainName();
-
-        // check if submit action is "back" (do not edit)
-        if (search.getAction().equals("back")) {
-            if (domainSearch.getPage("back") == null)
-                return "redirect:/search/domain";
-
-            return String.format("redirect:%s", domainSearch.getPage("back"));
-        }
-
-        // password change
-        if (search.getAction().equals("change-password")) {
-            model.addAttribute("search", domainSearch);
-            return "/edit/password/domain";
-        }
-
-        if (search.getAction().equals("cancel-password")) {
-            if (domainSearch.getPage("cancel-password") == null)
-                return String.format("redirect:/show/domain/%s", domainName);
-
-            return String.format("redirect:%s", domainSearch.getPage("cancel-password"));
-        }
-
-        // update password
-        if (search.getAction().equals("update-password")) {
-            domainService.updatePassword(domainSearch.getDomain(), search.getPassword1(), search.getPassword2());
-
-            if (domainSearch.getPage("update-password") == null)
-                return String.format("redirect:/show/domain/%s", domainName);
-
-            return String.format("redirect:%s", domainSearch.getPage("update-password"));
-        }
-
-        // we need packages to edit domain
-        List<Product> packages = productRepository.findPackages();
-        model.addAttribute("packages", packages);
-
-        return navigateTo(model, "/edit/domain", domainSearch);
-    }
-
-    @PostMapping("/edit/domain/{domainName}")
-    public String edit(Model model, @ModelAttribute DomainSearch search, @PathVariable String domainName) {
-        DomainSearch domainSearch = searchBean.getDomainSearch();
-
-        // check if submit action is "back" (do not create)
-        if (search.getAction().equals("cancel")) {
-            if (domainSearch.getPage("cancel") == null)
-                return "redirect:/search/domain";
-
-            return String.format("redirect:%s", domainSearch.getPage("cancel"));
-        }
-
-        // extract domain from DomainSearch object
-        Domain domain = search.getDomain();
-
-        // setup customer from  session
-        domain.setCustomer(search.getCustomer());
-
-        // setup product from DomainSearch object
-        domain.setProduct(search.getProduct());
-
-        // update it in database
-        domainService.updateDomain(domain);
-
-        return String.format("redirect:/show/domain/%s", domainName);
-    }
-
-    private String showDomain(Model model, String domainName, DomainSearch domainSearch) {
         domainSearch.setDomainName(domainName);
 
-        // all cancellation actions and password update actions return to domain show page
         domainSearch.addPage("cancel-password", String.format("/show/domain/%s", domainName));
         domainSearch.addPage("update-password", String.format("/show/domain/%s", domainName));
-        domainSearch.addPage("cancel", String.format("/show/domain/%s", domainName));
 
         return navigateTo(model, "/show/domain", domainSearch);
     }
@@ -248,7 +253,13 @@ public class DomainController {
 
         model.addAttribute("search", domainSearch);
 
-        if (status == 400) return "/invalid/domain";
+        if (status == 400) {
+            model.addAttribute("pageTitle", "Invalid Domain Name");
+            model.addAttribute("message", String.format("Domain name \"%s\" is invalid", domainSearch.getDomainName()));
+
+            return "/search/domain";
+        }
+
         if (status == 404) return "/404/domain";
 
         // store domain into Bean
@@ -260,24 +271,20 @@ public class DomainController {
     private int setupDomain(DomainSearch search) {
         String domain = search.getDomainName();
 
-        if (domainService.isValidDomain(domain)) {
-            Optional<Domain> domainLookup = domainRepository.findById(domain);
+        if ( ! domainService.isValidDomain(domain)) return 400;
 
-            if (domainLookup.isPresent()) {
-                Domain domainEntity = domainLookup.get();
+        Domain domainEntity = domainService.lookupDomain(domain);
 
-                search.setDomain(domainEntity);
-                search.setCustomer(domainEntity.getCustomer());
-                search.setProduct(domainEntity.getProduct());
-
-                return 200;
-            }
-
-            // unset if not found
+        if (domainEntity == null) {
             search.unset();
             return 404;
         }
-        return 400;
+
+        search.setDomain(domainEntity);
+        search.setCustomer(domainEntity.getCustomer());
+        search.setProduct(domainEntity.getProduct());
+
+        return 200;
     }
 
     private String searchCustomer(RedirectAttributes redirectAttributes) {
@@ -292,5 +299,38 @@ public class DomainController {
 
         redirectAttributes.addFlashAttribute("search", customerSearch);
         return "redirect:/search/customer";
+    }
+
+    private String showEditDomainForm(Model model) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+        String domainName = domainSearch.getDomainName();
+
+        // we need packages to edit domain
+        List<Product> packages = productRepository.findPackages();
+        model.addAttribute("packages", packages);
+
+        // we need services to add to domain
+        List<Product> services = productRepository.findServices();
+        model.addAttribute("services", services);
+
+        // existing domain services
+        List<DomainHostingService> domainServices = serviceRepository.findByDomainName(domainName);
+        model.addAttribute("domainServices", domainServices);
+
+        domainSearch.addPage("cancel", String.format("/show/domain/%s", domainName));
+
+        return navigateTo(model, "/edit/domain", domainSearch);
+    }
+
+    private String showSearchForm(Model model, HttpServletRequest request) {
+        DomainSearch domainSearch = searchBean.getDomainSearch();
+
+        domainSearch.addPage("back", request.getRequestURI());
+
+        searchBean.setDomainSearch(domainSearch);
+
+        model.addAttribute("search", domainSearch);
+
+        return "/search/domain";
     }
 }
