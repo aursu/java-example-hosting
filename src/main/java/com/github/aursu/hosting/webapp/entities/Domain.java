@@ -9,9 +9,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "Domain.findParents", query = "select d from Domain d where d.customer.id = :customerId and upper(:subdomain) like upper(concat('%', d.id))")
-})
 public class Domain {
     @Id
     @Column(name = "Domain", nullable = false)
@@ -43,8 +40,14 @@ public class Domain {
     @JoinColumn(name = "CustomerId", nullable = false)
     private Customer customer;
 
-    @OneToMany(mappedBy = "domain")
+    @OneToMany(mappedBy = "domain", fetch = FetchType.EAGER)
     private List<DomainHostingService> domainServices = new ArrayList<>();
+
+/*    @ManyToMany(fetch = FetchType.EAGER)
+ *    @JoinTable(name = "DomainService",
+ *            joinColumns = @JoinColumn(name = "Domain"),
+ *            inverseJoinColumns = @JoinColumn(name = "Product", referencedColumnName="Code"))
+ *    private List<Product> services = new ArrayList<>(); */
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PrimaryDomain")
