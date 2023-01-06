@@ -19,8 +19,8 @@
             <td>Customer:</td>
             <td>
                 <table>
+                    <tr><th colspan="2" th:text="|*{customer.firstName} *{customer.lastName}|"></th></tr>
                     <tr><td>ID:</td><td th:text="*{customer.id}"></td></tr>
-                    <tr><td>Name:</td><td th:text="|*{customer.firstName} *{customer.lastName}|"></td></tr>
                     <tr><td>E-mail:</td><td th:text="*{customer.email}"></td></tr>
                 </table>
                 <input type="hidden" th:field="*{customer.id}" />
@@ -30,8 +30,8 @@
             <td>Hoster:</td>
             <td>
                 <table>
+                    <tr><th colspan="2" th:text="*{customer.hoster.company}"></th></tr>
                     <tr><td>ID:</td><td th:text="*{customer.hoster.id}"></td></tr>
-                    <tr><td>Name:</td><td th:text="*{customer.hoster.company}"></td></tr>
                     <tr><td>Cluster:</td><td th:text="*{customer.hoster.cluster.name}"></td></tr>
                     <tr><td>Region:</td><td th:text="*{customer.hoster.cluster.region}"></td></tr>
                 </table>
